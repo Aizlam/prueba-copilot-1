@@ -35,6 +35,34 @@ activities = {
     }
 }
 
+# Additional activities
+activities.update({
+    "Soccer Team": {
+        "description": "Competitive soccer team practicing and playing matches against other schools.",
+        "participants": []
+    },
+    "Basketball Team": {
+        "description": "School basketball team that competes in regional leagues and tournaments.",
+        "participants": []
+    },
+    "Art Club": {
+        "description": "A space for students to explore drawing, painting, and other visual arts.",
+        "participants": []
+    },
+    "Music Ensemble": {
+        "description": "Group for students interested in performing instrumental and vocal music together.",
+        "participants": []
+    },
+    "Debate Club": {
+        "description": "Practice debate skills, research current events, and compete in tournaments.",
+        "participants": []
+    },
+    "Science Olympiad": {
+        "description": "Prepare for science and engineering challenges and regional Science Olympiad competitions.",
+        "participants": []
+    }
+})
+
 @app.get("/")
 def root():
     return RedirectResponse(url="/static/index.html")
