@@ -22,25 +22,46 @@ app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
 # In-memory activity database
 activities = {
     "Chess Club": {
-        "description": "Learn strategies and compete in chess tournaments",
-        "schedule": "Fridays, 3:30 PM - 5:00 PM",
-        "max_participants": 12,
-        "participants": ["michael@mergington.edu", "daniel@mergington.edu"]
+        "description": "A club for students who enjoy playing chess.",
+        "participants": []
     },
-    "Programming Class": {
-        "description": "Learn programming fundamentals and build software projects",
-        "schedule": "Tuesdays and Thursdays, 3:30 PM - 4:30 PM",
-        "max_participants": 20,
-        "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
+    "Robotics Team": {
+        "description": "Design and build robots to compete in local and national competitions.",
+        "participants": []
     },
-    "Gym Class": {
-        "description": "Physical education and sports activities",
-        "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
-        "max_participants": 30,
-        "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    "Drama Club": {
+        "description": "Perform plays and skits throughout the school year.",
+        "participants": []
     }
 }
 
+# Additional activities
+activities.update({
+    "Soccer Team": {
+        "description": "Competitive soccer team practicing and playing matches against other schools.",
+        "participants": []
+    },
+    "Basketball Team": {
+        "description": "School basketball team that competes in regional leagues and tournaments.",
+        "participants": []
+    },
+    "Art Club": {
+        "description": "A space for students to explore drawing, painting, and other visual arts.",
+        "participants": []
+    },
+    "Music Ensemble": {
+        "description": "Group for students interested in performing instrumental and vocal music together.",
+        "participants": []
+    },
+    "Debate Club": {
+        "description": "Practice debate skills, research current events, and compete in tournaments.",
+        "participants": []
+    },
+    "Science Olympiad": {
+        "description": "Prepare for science and engineering challenges and regional Science Olympiad competitions.",
+        "participants": []
+    }
+})
 
 @app.get("/")
 def root():
@@ -62,6 +83,28 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Check if the student is already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student is already signed up for this activity")
+
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
+
+@app.delete("/activities/{activity_name}/participants")
+def remove_participant(activity_name: str, email: str):
+    """Remove a participant from an activity"""
+    # Validate activity exists
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    activity = activities[activity_name]
+
+    # Remove all occurrences of the email (cleanup duplicates)
+    original_count = len(activity["participants"])
+    activity["participants"] = [p for p in activity["participants"] if p != email]
+
+    if len(activity["participants"]) == original_count:
+        raise HTTPException(status_code=404, detail="Participant not found")
+
+    return {"message": f"Removed {email} from {activity_name}"}
